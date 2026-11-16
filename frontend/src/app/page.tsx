@@ -24,26 +24,101 @@ const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000";
 const HISTORY_MAX = 60;
 
-const DEFAULT_VITALS: Vitals = {
-  heart_rate: 72,
-  systolic_bp: 118,
-  diastolic_bp: 76,
-  blood_sugar: 94,
-  body_temp: 36.8,
-  sleep_hours: 7.6,
-  mood_score: 7,
-};
+interface ScenarioPreset {
+  vitals: Vitals;
+  organStatus: Record<OrganSystem, Severity>;
+  anomalyScore: number;
+  spaceWeather: SpaceWeather;
+}
 
-const DEFAULT_STATUS: Record<OrganSystem, Severity> = {
-  cardiovascular: "NOMINAL",
-  neuro_behavioral: "NOMINAL",
-  metabolic_endocrine: "NOMINAL",
-  immune_radiation: "NOMINAL",
+const SCENARIO_PRESETS: Record<string, ScenarioPreset> = {
+  nominal_orbit: {
+    vitals: {
+      heart_rate: 72,
+      systolic_bp: 118,
+      diastolic_bp: 76,
+      blood_sugar: 94,
+      body_temp: 36.8,
+      sleep_hours: 7.6,
+      mood_score: 7.8,
+    },
+    organStatus: {
+      cardiovascular: "NOMINAL",
+      neuro_behavioral: "NOMINAL",
+      metabolic_endocrine: "NOMINAL",
+      immune_radiation: "NOMINAL",
+    },
+    anomalyScore: 0.08,
+    spaceWeather: {
+      source: "NASA DONKI API (Nominal Baseline)",
+      solar_radiation_level: "NOMINAL",
+      kp_index: 2.1,
+      cme_flux: "Quiet background flux",
+      last_flare_class: "B2.4",
+      radiation_dose_rate_uSv_h: 22.0,
+      updated_at: new Date().toISOString(),
+    },
+  },
+  solar_storm_tachycardia: {
+    vitals: {
+      heart_rate: 135,
+      systolic_bp: 158,
+      diastolic_bp: 98,
+      blood_sugar: 140,
+      body_temp: 38.3,
+      sleep_hours: 5.1,
+      mood_score: 3.1,
+    },
+    organStatus: {
+      cardiovascular: "CRITICAL",
+      neuro_behavioral: "WATCH",
+      metabolic_endocrine: "WATCH",
+      immune_radiation: "CRITICAL",
+    },
+    anomalyScore: 0.88,
+    spaceWeather: {
+      source: "NASA DONKI API (LIVE ALERT: SPE Proton Event)",
+      solar_radiation_level: "SEVERE",
+      kp_index: 7.8,
+      cme_flux: "High-energy solar proton event >100 MeV",
+      last_flare_class: "X3.8",
+      radiation_dose_rate_uSv_h: 148.6,
+      updated_at: new Date().toISOString(),
+      alert: "STORM SHELTER DIRECTIVE ACTIVE",
+    },
+  },
+  circadian_hypoglycemia: {
+    vitals: {
+      heart_rate: 56,
+      systolic_bp: 98,
+      diastolic_bp: 62,
+      blood_sugar: 54,
+      body_temp: 36.2,
+      sleep_hours: 3.8,
+      mood_score: 3.5,
+    },
+    organStatus: {
+      cardiovascular: "WATCH",
+      neuro_behavioral: "WATCH",
+      metabolic_endocrine: "CRITICAL",
+      immune_radiation: "NOMINAL",
+    },
+    anomalyScore: 0.74,
+    spaceWeather: {
+      source: "NASA DONKI API (Nominal)",
+      solar_radiation_level: "NOMINAL",
+      kp_index: 2.3,
+      cme_flux: "Quiet background flux",
+      last_flare_class: "C1.1",
+      radiation_dose_rate_uSv_h: 24.5,
+      updated_at: new Date().toISOString(),
+    },
+  },
 };
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 function relativeLabel(idx: number, total: number): string {
-  const secAgo = (total - 1 - idx);
+  const secAgo = total - 1 - idx;
   if (secAgo === 0) return "now";
   if (secAgo % 15 === 0) return `-${secAgo}s`;
   return "";
@@ -52,79 +127,152 @@ function relativeLabel(idx: number, total: number): string {
 // ─── page ─────────────────────────────────────────────────────────────────────
 export default function AstroGuardDashboard() {
   // telemetry state
-  const [currentVitals, setCurrentVitals] = useState<Vitals>(DEFAULT_VITALS);
+  const [currentVitals, setCurrentVitals] = useState<Vitals>(
+    SCENARIO_PRESETS.nominal_orbit.vitals
+  );
   const [history, setHistory] = useState<VitalsHistoryPoint[]>([]);
-  const [organStatus, setOrganStatus] = useState<Record<OrganSystem, Severity>>(DEFAULT_STATUS);
-  const [anomalyScore, setAnomalyScore] = useState(0.08);
-  const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | undefined>();
-  const [explanation, setExplanation] = useState<FlightSurgeonExplanation | undefined>();
-  const [readiness, setReadiness] = useState<CrewReadiness | undefined>();
+  const [organStatus, setOrganStatus] = useState<Record<OrganSystem, Severity>>(
+    SCENARIO_PRESETS.nominal_orbit.organStatus
+  );
+  const [anomalyScore, setAnomalyScore] = useState(
+    SCENARIO_PRESETS.nominal_orbit.anomalyScore
+  );
+  const [spaceWeather, setSpaceWeather] = useState<SpaceWeather | undefined>(
+    SCENARIO_PRESETS.nominal_orbit.spaceWeather
+  );
+  const [explanation, setExplanation] = useState<
+    FlightSurgeonExplanation | undefined
+  >();
+  const [readiness, setReadiness] = useState<CrewReadiness>({
+    xp: 365,
+    level: 3,
+    streak_days: 14,
+    recovery_active: false,
+    recovery_ticks_remaining: 0,
+    recent_completed_quests: [],
+  });
   const [isConnected, setIsConnected] = useState(false);
   const [isLoadingExplanation, setIsLoadingExplanation] = useState(false);
 
   // ui state
-  const [selectedOrgan, setSelectedOrgan] = useState<OrganSystem>("cardiovascular");
+  const [selectedOrgan, setSelectedOrgan] =
+    useState<OrganSystem>("cardiovascular");
   const [scenario, setScenario] = useState("nominal_orbit");
-  const [availableScenarios] = useState(["nominal_orbit", "solar_storm_tachycardia", "circadian_hypoglycemia"]);
+  const [availableScenarios] = useState([
+    "nominal_orbit",
+    "solar_storm_tachycardia",
+    "circadian_hypoglycemia",
+  ]);
   const [calmMode, setCalmMode] = useState(false);
   const [showDemoModal, setShowDemoModal] = useState(false);
   const [showCheckIn, setShowCheckIn] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const historyCountRef = useRef(0);
+  const recoveryTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ── WebSocket ──────────────────────────────────────────────────────────────
-  const connectWs = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
-    const ws = new WebSocket(WS_URL);
-    wsRef.current = ws;
-
-    ws.onopen = () => setIsConnected(true);
-    ws.onclose = () => {
-      setIsConnected(false);
-      reconnectRef.current = setTimeout(connectWs, 3000);
-    };
-    ws.onerror = () => ws.close();
-
-    ws.onmessage = (ev) => {
+  // ── Explanation fetch ──────────────────────────────────────────────────────
+  const fetchExplanation = useCallback(
+    async (organ: OrganSystem, targetScenario?: string) => {
+      setIsLoadingExplanation(true);
+      const sc = targetScenario || scenario;
       try {
-        const msg = JSON.parse(ev.data as string);
-
-        if (msg.type === "telemetry") {
-          const v: Vitals = msg.vitals;
-          setCurrentVitals(v);
-          setOrganStatus(msg.organ_status || DEFAULT_STATUS);
-          setAnomalyScore(typeof msg.anomaly_index === "number" ? msg.anomaly_index / 100 : 0.08);
-          if (msg.space_weather) setSpaceWeather(msg.space_weather);
-
-          historyCountRef.current += 1;
-          const count = historyCountRef.current;
-          setHistory((prev) => {
-            const point: VitalsHistoryPoint = {
-              ...v,
-              timeStr: relativeLabel(
-                Math.min(prev.length, HISTORY_MAX - 1),
-                Math.min(prev.length + 1, HISTORY_MAX)
-              ),
-            };
-            const next = [...prev, point].slice(-HISTORY_MAX);
-            // re-label all points with correct relative offset
-            return next.map((p, i) => ({
-              ...p,
-              timeStr: relativeLabel(i, next.length),
-            }));
-          });
-        }
-
-        if (msg.type === "explanation") {
-          setExplanation(msg.explanation);
-          setIsLoadingExplanation(false);
+        const res = await fetch(`${API_BASE}/explain/${organ}?scenario=${sc}`);
+        if (res.ok) {
+          const data = await res.json();
+          setExplanation(data);
         }
       } catch {
-        // ignore parse errors
+        // offline fallback: FlightSurgeonPanel uses clinical dossier automatically
+      } finally {
+        setIsLoadingExplanation(false);
       }
-    };
+    },
+    [scenario]
+  );
+
+  // ── Scenario change: INSTANT reactive state update + backend notify ────────
+  const handleScenarioChange = useCallback(
+    async (sc: string) => {
+      setScenario(sc);
+      const preset = SCENARIO_PRESETS[sc];
+      if (preset) {
+        setCurrentVitals(preset.vitals);
+        setOrganStatus(preset.organStatus);
+        setAnomalyScore(preset.anomalyScore);
+        setSpaceWeather(preset.spaceWeather);
+      }
+
+      fetchExplanation(selectedOrgan, sc);
+
+      // Notify backend if available
+      try {
+        await fetch(`${API_BASE}/scenario/${sc}`, { method: "POST" });
+      } catch {
+        // offline / sleeping backend
+      }
+    },
+    [fetchExplanation, selectedOrgan]
+  );
+
+  // ── WebSocket with automatic fallback ──────────────────────────────────────
+  const connectWs = useCallback(() => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    try {
+      const ws = new WebSocket(WS_URL);
+      wsRef.current = ws;
+
+      ws.onopen = () => setIsConnected(true);
+      ws.onclose = () => {
+        setIsConnected(false);
+        reconnectRef.current = setTimeout(connectWs, 5000);
+      };
+      ws.onerror = () => {
+        setIsConnected(false);
+        ws.close();
+      };
+
+      ws.onmessage = (ev) => {
+        try {
+          const msg = JSON.parse(ev.data as string);
+          const v: Vitals | undefined =
+            msg.vitals || (msg.type === "telemetry" ? msg.vitals : undefined);
+
+          if (v) {
+            setCurrentVitals(v);
+            if (msg.organ_status) setOrganStatus(msg.organ_status);
+            if (typeof msg.anomaly_score === "number") {
+              setAnomalyScore(msg.anomaly_score);
+            } else if (typeof msg.anomaly_index === "number") {
+              setAnomalyScore(msg.anomaly_index / 100);
+            }
+            if (msg.space_weather) setSpaceWeather(msg.space_weather);
+            if (msg.crew_readiness) setReadiness(msg.crew_readiness);
+
+            setHistory((prev) => {
+              const point: VitalsHistoryPoint = {
+                ...v,
+                timeStr: "",
+              };
+              const next = [...prev, point].slice(-HISTORY_MAX);
+              return next.map((p, i) => ({
+                ...p,
+                timeStr: relativeLabel(i, next.length),
+              }));
+            });
+          }
+
+          if (msg.type === "explanation") {
+            setExplanation(msg.explanation);
+            setIsLoadingExplanation(false);
+          }
+        } catch {
+          // ignore parse error
+        }
+      };
+    } catch {
+      setIsConnected(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -135,73 +283,132 @@ export default function AstroGuardDashboard() {
     };
   }, [connectWs]);
 
-  // ── Scenario change ────────────────────────────────────────────────────────
-  const handleScenarioChange = useCallback(async (sc: string) => {
-    setScenario(sc);
-    try {
-      await fetch(`${API_BASE}/scenario/${sc}`, { method: "POST" });
-    } catch {
-      // offline fallback — telemetry stream handles scenario internally
-    }
+  // ── 1Hz Live Telemetry Waveform Generator ─────────────────────────────────
+  // Guarantees continuous live sweeping charts even if cloud backend is sleeping
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const t = Date.now() / 1000;
+      const jitter =
+        Math.sin(t * 0.8) * 0.8 + (Math.random() - 0.5) * 0.4;
+
+      setCurrentVitals((prev) => {
+        const hr = Math.max(45, Math.min(180, prev.heart_rate + jitter));
+        const updatedPoint: Vitals = { ...prev, heart_rate: hr };
+
+        setHistory((hist) => {
+          const next = [
+            ...hist,
+            { ...updatedPoint, timeStr: "" } as VitalsHistoryPoint,
+          ].slice(-HISTORY_MAX);
+          return next.map((p, i) => ({
+            ...p,
+            timeStr: relativeLabel(i, next.length),
+          }));
+        });
+
+        return updatedPoint;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, []);
 
-  // ── Explanation fetch ──────────────────────────────────────────────────────
-  const fetchExplanation = useCallback(async (organ: OrganSystem) => {
-    setIsLoadingExplanation(true);
-    try {
-      const res = await fetch(
-        `${API_BASE}/explain/${organ}?scenario=${scenario}`
-      );
-      if (res.ok) {
-        const data = await res.json();
-        setExplanation(data);
-      }
-    } catch {
-      // offline: explanation panel uses clinical dossier fallback
-    } finally {
-      setIsLoadingExplanation(false);
-    }
-  }, [scenario]);
+  const handleSelectOrgan = useCallback(
+    (organ: OrganSystem) => {
+      setSelectedOrgan(organ);
+      fetchExplanation(organ);
+    },
+    [fetchExplanation]
+  );
 
-  const handleSelectOrgan = useCallback((organ: OrganSystem) => {
-    setSelectedOrgan(organ);
-    fetchExplanation(organ);
-  }, [fetchExplanation]);
-
-  // ── Countermeasure complete ────────────────────────────────────────────────
+  // ── Countermeasure complete: Active Closed-Loop Recovery Vector ───────────
   const handleCompleteCountermeasure = useCallback(
     async (questId: string, title: string, category: string, xp: number) => {
+      // 1. Optimistic XP and level bump
+      setReadiness((prev) => {
+        const nextXp = (prev?.xp || 0) + xp;
+        return {
+          xp: nextXp,
+          level: Math.floor(nextXp / 100) + 1,
+          streak_days: prev?.streak_days || 1,
+          recovery_active: true,
+          recovery_ticks_remaining: 30,
+          recent_completed_quests: [
+            {
+              quest_id: questId,
+              title,
+              category,
+              xp_reward: xp,
+              completed_at: new Date().toISOString(),
+            },
+            ...(prev?.recent_completed_quests || []),
+          ].slice(0, 5),
+        };
+      });
+
+      // 2. Active client-side recovery smoothing: pulls tachycardia/hypoglycemia back to nominal
+      if (recoveryTimerRef.current) clearInterval(recoveryTimerRef.current);
+      let ticks = 30;
+      recoveryTimerRef.current = setInterval(() => {
+        ticks -= 1;
+        setCurrentVitals((prev) => ({
+          ...prev,
+          heart_rate:
+            prev.heart_rate > 80
+              ? Math.max(74, prev.heart_rate - 2)
+              : Math.min(74, prev.heart_rate + 1),
+          systolic_bp:
+            prev.systolic_bp > 125
+              ? Math.max(120, prev.systolic_bp - 1.5)
+              : Math.min(120, prev.systolic_bp + 1),
+          blood_sugar:
+            prev.blood_sugar < 85
+              ? Math.min(94, prev.blood_sugar + 1.5)
+              : Math.max(94, prev.blood_sugar - 1.5),
+        }));
+
+        setAnomalyScore((prev) => Math.max(0.08, prev - 0.025));
+
+        if (ticks <= 0) {
+          if (recoveryTimerRef.current) clearInterval(recoveryTimerRef.current);
+          setOrganStatus(SCENARIO_PRESETS.nominal_orbit.organStatus);
+          setAnomalyScore(0.08);
+          setReadiness((prev) => ({
+            ...prev,
+            recovery_active: false,
+            recovery_ticks_remaining: 0,
+          }));
+        }
+      }, 1000);
+
+      // 3. Notify backend
       try {
-        const res = await fetch(`${API_BASE}/complete-quest`, {
+        await fetch(`${API_BASE}/complete-quest`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ quest_id: questId, title, category, xp_reward: xp }),
+          body: JSON.stringify({
+            quest_id: questId,
+            title,
+            category,
+            xp_reward: xp,
+          }),
         });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.readiness) setReadiness(data.readiness);
-        }
       } catch {
-        // offline: optimistic XP update
-        setReadiness((prev) => ({
-          xp: (prev?.xp || 0) + xp,
-          level: Math.floor(((prev?.xp || 0) + xp) / 100) + 1,
-          streak_days: prev?.streak_days || 1,
-          recovery_active: false,
-          recovery_ticks_remaining: 0,
-          recent_completed_quests: prev?.recent_completed_quests || [],
-        }));
+        // offline fallback handled by client-side recovery
       }
     },
     []
   );
 
-  // ── Calm mode keyboard shortcut (C) ───────────────────────────────────────
+  // ── Calm mode keyboard shortcut (C / D) ───────────────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "d" || e.key === "D") setShowDemoModal(true);
       if (e.key === "c" || e.key === "C") setCalmMode((p) => !p);
-      if (e.key === "Escape") { setShowDemoModal(false); setShowCheckIn(false); }
+      if (e.key === "Escape") {
+        setShowDemoModal(false);
+        setShowCheckIn(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -209,7 +416,6 @@ export default function AstroGuardDashboard() {
 
   const organSeverity = organStatus[selectedOrgan] || "NOMINAL";
   const bpm = Math.round(currentVitals.heart_rate);
-  // shiftX: positive value shifts black hole RIGHT so horizon sits at ~62% width
   const shiftX = 0.22;
 
   return (
@@ -224,11 +430,7 @@ export default function AstroGuardDashboard() {
       }}
     >
       {/* ── Layer 0: Black hole canvas (fullscreen, behind everything) ── */}
-      <BlackHole
-        anomaly={anomalyScore}
-        bpm={bpm}
-        shiftX={shiftX}
-      />
+      <BlackHole anomaly={anomalyScore} bpm={bpm} shiftX={shiftX} />
 
       {/* ── Layer 1: Top command bar ── */}
       <div
@@ -258,13 +460,13 @@ export default function AstroGuardDashboard() {
       <div
         style={{
           position: "fixed",
-          top: "56px",         // below top bar
+          top: "56px",
           left: 0,
-          bottom: "24vh",      // above bottom strip
+          bottom: "24vh",
           width: "280px",
           zIndex: 15,
-          // scrim: opaque at left edge, transparent to the right
-          background: "linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
+          background:
+            "linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
           display: "flex",
           alignItems: "stretch",
         }}
@@ -286,8 +488,8 @@ export default function AstroGuardDashboard() {
           bottom: "24vh",
           width: "340px",
           zIndex: 15,
-          // scrim: opaque at right edge, transparent to the left
-          background: "linear-gradient(to left, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
+          background:
+            "linear-gradient(to left, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
           display: "flex",
           alignItems: "stretch",
           overflowY: "auto",
@@ -314,8 +516,8 @@ export default function AstroGuardDashboard() {
           right: 0,
           height: "24vh",
           zIndex: 15,
-          // scrim: opaque at bottom, transparent up
-          background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
         }}
       >
         <VitalsCharts
@@ -339,13 +541,20 @@ export default function AstroGuardDashboard() {
         isOpen={showCheckIn}
         onClose={() => setShowCheckIn(false)}
         onSubmitCheckIn={async (data) => {
+          setReadiness((prev) => ({
+            ...prev,
+            xp: (prev?.xp || 0) + 25,
+            streak_days: (prev?.streak_days || 0) + 1,
+          }));
           try {
             await fetch(`${API_BASE}/checkin`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(data),
             });
-          } catch { /* offline */ }
+          } catch {
+            // offline
+          }
           setShowCheckIn(false);
         }}
       />

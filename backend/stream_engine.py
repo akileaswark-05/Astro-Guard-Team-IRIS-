@@ -478,6 +478,7 @@ async def explain_organ(organ_system: str):
 # WEBSOCKET 1Hz TELEMETRY STREAM
 # ==========================================
 @app.websocket("/ws/vitals")
+@app.websocket("/ws/telemetry")
 async def websocket_vitals_endpoint(websocket: WebSocket):
     """
     Streams 1Hz real-time physiological telemetry packets over WebSocket.
@@ -507,6 +508,10 @@ async def websocket_vitals_endpoint(websocket: WebSocket):
                 }
                 packet["anomaly_score"] = 0.05
                 packet["is_anomaly"] = False
+
+            packet["type"] = "telemetry"
+            if "anomaly_index" not in packet and "anomaly_score" in packet:
+                packet["anomaly_index"] = int(packet["anomaly_score"] * 100)
 
             # 2. Broadcast JSON payload
             await websocket.send_text(json.dumps(packet))
