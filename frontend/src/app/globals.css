@@ -1,28 +1,24 @@
-@import "@fontsource-variable/geist/index.css";
-@import "@fontsource-variable/geist-mono/index.css";
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;500;600;700&family=Rajdhani:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Akira Expanded';
-  src: url('https://fonts.cdnfonts.com/s/72228/AkiraExpandedDemo.woff') format('woff'),
-       local('Akira Expanded'), local('Akira-Expanded'), local('Akira');
-  font-weight: 800 900;
-  font-display: swap;
-}
-
 :root {
-  --font-akira: "Akira Expanded", "Akira", "Orbitron", -apple-system, sans-serif;
-  --font-sans: "Geist Variable", "Geist", -apple-system, sans-serif;
-  --font-mono: "Geist Mono Variable", "Geist Mono", monospace;
+  --font-display: "Rajdhani", -apple-system, sans-serif;
+  --font-sans: "Outfit", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
   
-  --bg-matte-base: #090A0D;
-  --bg-matte-surface: #0D1015;
-  --bg-matte-card: #12151D;
-  --border-tactical: rgba(255, 255, 255, 0.08);
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --vc-pink: #FF2A85;
+  --vc-cyan: #00F0FF;
+  --vc-purple: #A855F7;
+  --vc-amber: #FF9E00;
+  --vc-bg-base: #06030A;
+  --vc-surface: rgba(12, 6, 22, 0.82);
+  --vc-card: rgba(22, 10, 38, 0.78);
+  --vc-border-pink: rgba(255, 42, 133, 0.45);
+  --vc-border-cyan: rgba(0, 240, 255, 0.45);
+  --vc-border-purple: rgba(168, 85, 247, 0.35);
 }
 
 html, body {
@@ -31,8 +27,8 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: var(--bg-matte-base);
-  color: #E6E8EC;
+  background-color: var(--vc-bg-base);
+  color: #F3F4F6;
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.5;
@@ -40,25 +36,17 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Aerospace Typography Hierarchy ─────────────────────────────────────── */
-.font-akira {
-  font-family: var(--font-akira);
-  font-weight: 800;
+/* ─── Real Authentic Vice City Typography Hierarchy ────────────────────── */
+.font-display-vc {
+  font-family: var(--font-display);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
 }
 
-.font-ui-sans {
+.font-body-vc {
   font-family: var(--font-sans);
   font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: normal;
-}
-
-.font-ui-medium {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  line-height: 1.5;
 }
 
 .font-telemetry-mono {
@@ -67,82 +55,83 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
-/* ─── Tactical Surfaces & 1px Engineered Borders ─────────────────────────── */
-.bg-tactical-base {
-  background-color: #090A0D;
+/* ─── Outlines for All Text Containers (Vice City Theme) ─────────────────── */
+.vc-outline-pink {
+  border: 1px solid var(--vc-border-pink);
+  box-shadow: 0 0 10px rgba(255, 42, 133, 0.18), inset 0 0 8px rgba(255, 42, 133, 0.06);
 }
 
-.bg-tactical-surface {
-  background-color: #0D1015;
+.vc-outline-cyan {
+  border: 1px solid var(--vc-border-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.18), inset 0 0 8px rgba(0, 240, 255, 0.06);
 }
 
-.bg-tactical-card {
-  background-color: #12151D;
+.vc-outline-purple {
+  border: 1px solid var(--vc-border-purple);
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.14);
 }
 
-.border-tactical {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.vc-glass-panel {
+  background: var(--vc-surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
-.border-tactical-t {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.vc-glass-card {
+  background: var(--vc-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.border-tactical-b {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+/* Neon text accents */
+.vc-text-pink {
+  color: #FF2A85;
+  text-shadow: 0 0 10px rgba(255, 42, 133, 0.4);
 }
 
-.border-tactical-l {
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+.vc-text-cyan {
+  color: #00F0FF;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
 }
 
-.border-tactical-r {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+.vc-text-purple {
+  color: #C084FC;
 }
 
-/* ─── Aerospace Coordinate Grid Background ──────────────────────────────── */
-.tactical-grid-bg {
-  background-color: #090A0D;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-/* ─── Tactical Status Badges ─────────────────────────────────────────────── */
+/* ─── Outlined Status Badges ────────────────────────────────────────────── */
 .status-badge-nominal {
-  background-color: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-left: 2px solid #10B981;
-  color: #34D399;
+  background-color: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+  color: #00F0FF;
 }
 
 .status-badge-watch {
-  background-color: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  border-left: 2px solid #F59E0B;
-  color: #FBBF24;
+  background-color: rgba(255, 158, 0, 0.08);
+  border: 1px solid rgba(255, 158, 0, 0.5);
+  box-shadow: 0 0 8px rgba(255, 158, 0, 0.2);
+  color: #FFB800;
 }
 
 .status-badge-critical {
-  background-color: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-left: 2px solid #EF4444;
-  color: #F87171;
+  background-color: rgba(255, 42, 133, 0.12);
+  border: 1px solid rgba(255, 42, 133, 0.65);
+  box-shadow: 0 0 12px rgba(255, 42, 133, 0.35);
+  color: #FF2A85;
 }
 
-/* Custom minimal scrollbar */
+/* Custom Vice City Scrollbar */
 ::-webkit-scrollbar {
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(10, 6, 20, 0.5);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 1px;
+  background: rgba(255, 42, 133, 0.4);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 240, 255, 0.6);
 }

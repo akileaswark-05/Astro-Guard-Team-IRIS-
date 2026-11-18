@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { TacticalViewport } from "@/components/TacticalViewport";
+import { BlackHole } from "@/blackhole/BlackHole";
 import { AnatomyVisualizer } from "@/components/AnatomyVisualizer";
 import { FlightSurgeonPanel } from "@/components/FlightSurgeonPanel";
 import { VitalsCharts, VitalsHistoryPoint } from "@/components/VitalsCharts";
@@ -426,19 +426,11 @@ export default function AstroGuardDashboard() {
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
-        background: "#090A0D",
+        background: "#06030A",
       }}
     >
-      {/* ── Layer 0: Aerospace Tactical Telemetry Viewport (Centerpiece) ── */}
-      <TacticalViewport
-        selectedOrgan={selectedOrgan}
-        organStatus={organStatus}
-        anomalyScore={anomalyScore}
-        bpm={bpm}
-        currentVitals={currentVitals}
-        spaceWeather={spaceWeather}
-        onSelectOrgan={handleSelectOrgan}
-      />
+      {/* ── Layer 0: Untouched Relativistic Black Hole Simulation (Centerpiece) ── */}
+      <BlackHole anomaly={anomalyScore} bpm={bpm} shiftX={shiftX} />
 
       {/* ── Layer 1: Top command bar ── */}
       <div
@@ -466,6 +458,7 @@ export default function AstroGuardDashboard() {
 
       {/* ── Layer 2: Left rail (body figure + system list) ── */}
       <div
+        className="vc-glass-panel"
         style={{
           position: "fixed",
           top: "56px",
@@ -473,8 +466,8 @@ export default function AstroGuardDashboard() {
           bottom: "24vh",
           width: "280px",
           zIndex: 15,
-          background: "#0D1015",
-          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+          borderRight: "1px solid var(--vc-border-pink)",
+          boxShadow: "2px 0 20px rgba(255, 42, 133, 0.15)",
           display: "flex",
           alignItems: "stretch",
         }}
@@ -489,15 +482,16 @@ export default function AstroGuardDashboard() {
 
       {/* ── Layer 3: Right rail (flight surgeon) ── */}
       <div
+        className="vc-glass-panel"
         style={{
           position: "fixed",
           top: "56px",
           right: 0,
           bottom: "24vh",
-          width: "340px",
+          width: "350px",
           zIndex: 15,
-          background: "#0D1015",
-          borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+          borderLeft: "1px solid var(--vc-border-cyan)",
+          boxShadow: "-2px 0 20px rgba(0, 240, 255, 0.15)",
           display: "flex",
           alignItems: "stretch",
           overflowY: "auto",
@@ -517,6 +511,7 @@ export default function AstroGuardDashboard() {
 
       {/* ── Layer 4: Bottom telemetry strip ── */}
       <div
+        className="vc-glass-panel"
         style={{
           position: "fixed",
           bottom: 0,
@@ -524,8 +519,8 @@ export default function AstroGuardDashboard() {
           right: 0,
           height: "24vh",
           zIndex: 15,
-          background: "#090A0D",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          borderTop: "1px solid var(--vc-border-cyan)",
+          boxShadow: "0 -2px 20px rgba(0, 240, 255, 0.15)",
         }}
       >
         <VitalsCharts

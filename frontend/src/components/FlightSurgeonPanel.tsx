@@ -187,105 +187,105 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
   };
 
   return (
-    <div className="w-[340px] h-full flex flex-col justify-between p-4 select-none bg-[#0D1015] border-l border-tactical z-10 overflow-hidden">
+    <div className="w-[350px] h-full flex flex-col justify-between p-4 select-none vc-glass-panel border-l border-cyan-400/30 z-10 overflow-hidden">
       <div className="flex-1 overflow-y-auto pr-1 space-y-3">
-        {/* Rail Header in Akira / Monospace */}
-        <div className="flex items-center justify-between pb-2.5 border-b border-tactical">
+        {/* Rail Header in Rajdhani Display / Monospace */}
+        <div className="flex items-center justify-between pb-2.5 border-b border-cyan-400/30">
           <div>
-            <div className="font-akira text-[11px] text-white tracking-widest">
+            <div className="font-display-vc text-[13px] text-cyan-400 tracking-wider">
               FLIGHT SURGEON
             </div>
-            <div className="font-telemetry-mono text-[10px] text-neutral-400">
+            <div className="font-telemetry-mono text-[9px] text-pink-400">
               NASA-STD-3001 // CLINICAL
             </div>
           </div>
-          <div className="font-telemetry-mono text-[10px] px-2 py-0.5 bg-[#12151D] border border-tactical text-amber-400 rounded-[2px]">
+          <div className="font-telemetry-mono text-[10px] px-2 py-0.5 bg-cyan-950/40 border border-cyan-400/50 text-cyan-300 rounded-[2px] shadow-[0_0_8px_rgba(0,240,255,0.2)]">
             AI_CORE: ACTIVE
           </div>
         </div>
 
-        {/* HERO ASSESSMENT: Clean Technical Grotesque Sans (NO editorial serifs) */}
-        <div className="p-3 bg-[#12151D] border border-tactical rounded-[2px]">
-          <div className="font-telemetry-mono text-[10px] text-cyan-400 tracking-wider mb-1">
+        {/* HERO ASSESSMENT: Clean Authentic Font with Vice City Outlined Box */}
+        <div className="p-3 bg-[#130722]/85 border border-pink-500/40 rounded-[2px] shadow-[0_0_12px_rgba(255,42,133,0.18)]">
+          <div className="font-display-vc text-[11px] text-pink-400 tracking-wider mb-1">
             &gt; CLINICAL ASSESSMENT SUMMARY
           </div>
-          <div className="font-ui-sans font-medium text-[14px] text-white leading-snug">
+          <div className="font-body-vc font-medium text-[13.5px] text-white leading-snug">
             {dossier.hero}
           </div>
         </div>
 
         {/* Section 1: CLINICAL ASSESSMENT */}
-        <div className="pt-2 border-t border-tactical">
+        <div className="pt-2 border-t border-purple-500/30">
           <button
             onClick={() => setOpenSections((p) => ({ ...p, happening: !p.happening }))}
-            className="w-full flex items-center justify-between text-left font-telemetry-mono font-bold text-[11px] text-neutral-300 hover:text-white tracking-wider"
+            className="w-full flex items-center justify-between text-left font-display-vc font-bold text-[12px] text-cyan-300 hover:text-cyan-200 tracking-wider"
           >
             <span>[+] CLINICAL ASSESSMENT</span>
-            {openSections.happening ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {openSections.happening ? <ChevronUp className="w-3.5 h-3.5 text-cyan-400" /> : <ChevronDown className="w-3.5 h-3.5 text-cyan-400" />}
           </button>
           {openSections.happening && (
-            <p className="mt-1.5 font-ui-sans text-[13px] text-neutral-300 leading-relaxed bg-[#12151D]/60 p-2.5 rounded-[2px] border border-tactical">
+            <p className="mt-1.5 font-body-vc text-[12.5px] text-neutral-200 leading-relaxed bg-[#140824]/85 p-2.5 rounded-[2px] border border-cyan-400/30 shadow-[0_0_10px_rgba(0,240,255,0.1)]">
               {dossier.happening}
             </p>
           )}
         </div>
 
         {/* Section 2: MICROGRAVITY IMPACT */}
-        <div className="pt-2 border-t border-tactical">
+        <div className="pt-2 border-t border-purple-500/30">
           <button
             onClick={() => setOpenSections((p) => ({ ...p, why: !p.why }))}
-            className="w-full flex items-center justify-between text-left font-telemetry-mono font-bold text-[11px] text-neutral-300 hover:text-white tracking-wider"
+            className="w-full flex items-center justify-between text-left font-display-vc font-bold text-[12px] text-purple-300 hover:text-purple-200 tracking-wider"
           >
             <span>[+] MICROGRAVITY IMPACT</span>
-            {openSections.why ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {openSections.why ? <ChevronUp className="w-3.5 h-3.5 text-purple-400" /> : <ChevronDown className="w-3.5 h-3.5 text-purple-400" />}
           </button>
           {openSections.why && (
-            <p className="mt-1.5 font-ui-sans text-[13px] text-neutral-400 leading-relaxed bg-[#12151D]/60 p-2.5 rounded-[2px] border border-tactical">
+            <p className="mt-1.5 font-body-vc text-[12.5px] text-neutral-200 leading-relaxed bg-[#140824]/85 p-2.5 rounded-[2px] border border-purple-400/30 shadow-[0_0_10px_rgba(168,85,247,0.1)]">
               {dossier.why}
             </p>
           )}
         </div>
 
         {/* Section 3: PROTOCOL CHECKLIST */}
-        <div className="pt-2 border-t border-tactical">
+        <div className="pt-2 border-t border-purple-500/30">
           <button
             onClick={() => setOpenSections((p) => ({ ...p, countermeasure: !p.countermeasure }))}
-            className="w-full flex items-center justify-between text-left font-telemetry-mono font-bold text-[11px] text-neutral-300 hover:text-white tracking-wider"
+            className="w-full flex items-center justify-between text-left font-display-vc font-bold text-[12px] text-pink-300 hover:text-pink-200 tracking-wider"
           >
             <span>[+] PROTOCOL CHECKLIST</span>
-            {openSections.countermeasure ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {openSections.countermeasure ? <ChevronUp className="w-3.5 h-3.5 text-pink-400" /> : <ChevronDown className="w-3.5 h-3.5 text-pink-400" />}
           </button>
 
           {openSections.countermeasure && (
-            <div className="mt-2 space-y-1.5">
+            <div className="mt-2 space-y-2">
               {dossier.checklist.map((item, idx) => {
                 const isDone = !!checkedSteps[idx];
                 return (
                   <div
                     key={idx}
                     onClick={() => handleToggleCheck(idx, item)}
-                    className={`p-2.5 rounded-[2px] border transition-colors cursor-pointer flex items-start gap-2.5 ${
+                    className={`p-2.5 rounded-[2px] border transition-all cursor-pointer flex items-start gap-2.5 ${
                       isDone
-                        ? "bg-emerald-950/25 border-emerald-500/40 text-emerald-200"
-                        : "bg-[#12151D] hover:bg-[#161B26] border-tactical text-neutral-200"
+                        ? "bg-cyan-950/40 border-cyan-400 text-cyan-200 shadow-[0_0_10px_rgba(0,240,255,0.2)]"
+                        : "bg-[#130724]/85 hover:bg-[#1D0C36] border-pink-500/40 text-neutral-100 shadow-[0_0_8px_rgba(255,42,133,0.1)]"
                     }`}
                   >
                     <div
                       className={`w-4 h-4 rounded-[1px] mt-0.5 flex-shrink-0 flex items-center justify-center border transition-colors ${
                         isDone
-                          ? "bg-emerald-500 border-emerald-400 text-black"
-                          : "border-white/20 bg-black/50"
+                          ? "bg-cyan-400 border-cyan-300 text-black shadow-[0_0_8px_#00F0FF]"
+                          : "border-pink-500/50 bg-black/60"
                       }`}
                     >
                       {isDone && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
 
-                    <div className="flex-1 font-ui-sans text-[12px] leading-snug">
+                    <div className="flex-1 font-body-vc text-[12px] leading-snug">
                       <div className={isDone ? "line-through opacity-70" : ""}>
                         {item.text}
                       </div>
                       {/* Subtle protocol completion weight */}
-                      <div className="font-telemetry-mono text-[10px] text-cyan-400 mt-1">
+                      <div className="font-telemetry-mono text-[10px] text-pink-400 mt-1">
                         PROTOCOL WEIGHT: {(item.xp / 100).toFixed(2)} // LOG VERIFIED
                       </div>
                     </div>
@@ -298,24 +298,24 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
 
         {/* Custom reply if asked */}
         {customReply && (
-          <div className="p-2.5 rounded-[2px] bg-[#12151D] border border-cyan-500/30 text-[12px] font-telemetry-mono text-neutral-200 mt-2">
+          <div className="p-2.5 rounded-[2px] bg-[#140824]/90 border border-cyan-400/50 text-[11px] font-telemetry-mono text-cyan-200 mt-2 shadow-[0_0_10px_rgba(0,240,255,0.2)]">
             {customReply}
           </div>
         )}
       </div>
 
       {/* Flight Surgeon Command Prompt */}
-      <form onSubmit={handleAsk} className="pt-2.5 mt-2 border-t border-tactical flex items-center gap-2">
+      <form onSubmit={handleAsk} className="pt-2.5 mt-2 border-t border-cyan-400/30 flex items-center gap-2">
         <input
           type="text"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="ENTER MEDICAL QUERY..."
-          className="flex-1 bg-[#12151D] text-neutral-200 text-[11px] font-telemetry-mono px-3 py-1.5 rounded-[2px] border border-tactical focus:border-cyan-400 outline-none placeholder:text-neutral-500 tracking-wider"
+          className="flex-1 bg-[#120822] text-neutral-200 text-[11px] font-telemetry-mono px-3 py-1.5 rounded-[2px] border border-cyan-400/40 focus:border-cyan-300 outline-none placeholder:text-neutral-500 tracking-wider shadow-[0_0_8px_rgba(0,240,255,0.15)]"
         />
         <button
           type="submit"
-          className="p-1.5 rounded-[2px] bg-[#161B26] hover:bg-[#1E2536] text-cyan-300 border border-tactical transition-colors"
+          className="p-1.5 rounded-[2px] bg-[#1A0C32] hover:bg-[#28134C] text-pink-400 border border-pink-500/50 shadow-[0_0_10px_rgba(255,42,133,0.25)] transition-colors"
           title="Submit Clinical Query"
         >
           <Send className="w-3.5 h-3.5" />
