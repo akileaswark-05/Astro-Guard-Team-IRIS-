@@ -41,13 +41,12 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
   const [question, setQuestion] = useState("");
   const [customReply, setCustomReply] = useState<string | null>(null);
 
-  // Clear checked steps when organ or severity changes
   useEffect(() => {
     setCheckedSteps({});
     setCustomReply(null);
   }, [selectedOrgan, organSeverity]);
 
-  // CLINICAL TRUTH DISPATCHER: Guarantees 100% data correctness and eliminates nominal/act mismatches
+  // CLINICAL TRUTH DISPATCHER: NASA-STD-3001 Aerospace Medicine Logic
   const getClinicalDossier = () => {
     const hr = Math.round(currentVitals?.heart_rate || 72);
     const sbp = Math.round(currentVitals?.systolic_bp || 120);
@@ -60,34 +59,34 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
     if (selectedOrgan === "cardiovascular") {
       if (organSeverity === "CRITICAL") {
         return {
-          hero: `Your heart rate is ${hr} bpm and rising. This needs attention now.`,
-          happening: `Acute sinus tachycardia (${hr} bpm) and systemic arterial hypertension (${sbp}/${dbp} mmHg) triggered by acute microgravity hemodynamic stress.`,
-          why: `Without hydrostatic pressure gradients, cephalad fluid shift engorges thoracic circulation, overloading cardiac preload and spiking myocardial oxygen demand.`,
+          hero: `Acute sinus tachycardia (${hr} BPM) with cephalad arterial hypertension (${sbp}/${dbp} mmHg). Emergency protocol active.`,
+          happening: `Cephalic fluid redistribution has engorged central thoracic circulation, spiking cardiac output and sympathetic myocardial workload.`,
+          why: `In zero gravity, loss of hydrostatic pressure pooling increases central blood volume by ~2L, triggering baroreceptor dysfunction and acute stress tachycardia.`,
           checklist: [
-            { text: "Perform 15-second Valsalva vagal maneuver", xp: 45 },
-            { text: "Ingest 250ml cold electrolyte rehydration fluid", xp: 35 },
-            { text: "Engage lower-body negative pressure garment at -30 mmHg", xp: 60 },
+            { text: "Execute 15-second Valsalva vagal maneuver", xp: 45 },
+            { text: "Ingest 250ml chilled electrolyte rehydration solution", xp: 35 },
+            { text: "Engage Lower-Body Negative Pressure (LBNP) garment at -30 mmHg", xp: 60 },
           ],
         };
       }
       if (organSeverity === "WATCH") {
         return {
-          hero: `Cardiovascular pulse pressure is widening (${sbp}/${dbp} mmHg). Monitor closely.`,
-          happening: `Mild sympathetic activation with moderate heart rate elevation (${hr} bpm).`,
-          why: `Fluid redistribution in microgravity alters baroreceptor setpoints and stroke volume regulation.`,
+          hero: `Cardiovascular pulse pressure widening (${sbp}/${dbp} mmHg) with moderate heart rate elevation (${hr} BPM).`,
+          happening: `Mild sympathetic activation detected with compensatory stroke volume elevation.`,
+          why: `Microgravity fluid shifts are altering vascular impedance and baroreceptor sensitivity.`,
           checklist: [
-            { text: "Log 5-minute paced diaphragmatic breathing", xp: 25 },
-            { text: "Check arterial cuff placement and re-verify", xp: 20 },
+            { text: "Initiate 5-minute paced diaphragmatic breathing protocol", xp: 25 },
+            { text: "Re-calibrate continuous arterial tonometry cuff", xp: 20 },
           ],
         };
       }
       return {
-        hero: `Cardiovascular hemodynamics are nominal and stable at ${hr} bpm.`,
-        happening: `Resting pulse (${hr} bpm) and arterial pressure (${sbp}/${dbp} mmHg) remain strictly within deep-space baseline boundaries.`,
-        why: `Adapted baroreflex response maintains stable cerebral perfusion across routine mission workload.`,
+        hero: `Cardiovascular hemodynamics are nominal and stable at ${hr} BPM (${sbp}/${dbp} mmHg).`,
+        happening: `Resting cardiac rhythm and systemic perfusion remain within certified NASA-STD-3001 deep-space operational boundaries.`,
+        why: `Adapted baroreflex response maintains stable cerebral perfusion across routine mission operations.`,
         checklist: [
-          { text: "Complete routine 30-minute cycle ergometer session", xp: 30 },
-          { text: "Record routine hydration log", xp: 15 },
+          { text: "Complete routine 30-minute cycle ergometer exercise session", xp: 30 },
+          { text: "Record routine crew hydration telemetry log", xp: 15 },
         ],
       };
     }
@@ -95,22 +94,22 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
     if (selectedOrgan === "immune_radiation") {
       if (organSeverity === "CRITICAL" || organSeverity === "WATCH") {
         return {
-          hero: `Solar flare flux active at ${dose} µSv/h. Radiation storm shelter engaged.`,
-          happening: `High-energy solar particle event (SPE) proton flux is penetrating outer hull shielding at ${dose} µSv/h.`,
-          why: `Ionizing galactic radiation damages hematopoietic bone marrow stem cells while microgravity blunts DNA repair enzymes.`,
+          hero: `Solar Particle Event (SPE) proton flux active at ${dose} µSv/h. Radiation shelter protocol engaged.`,
+          happening: `High-energy galactic and solar cosmic proton flux is penetrating secondary hull shielding at ${dose} µSv/h.`,
+          why: `Ionizing radiation suppresses hematopoietic bone marrow stem cell proliferation while microgravity inhibits cellular DNA repair enzymes.`,
           checklist: [
-            { text: "Retreat to water-wall storm shelter immediately", xp: 60 },
-            { text: "Deploy personal radiation badge to crew collar", xp: 25 },
-            { text: "Administer oral antioxidant radioprotectant packet", xp: 40 },
+            { text: "Relocate crew to internal storm shelter module", xp: 50 },
+            { text: "Administer 200mg radioprotective antioxidant formulation", xp: 35 },
+            { text: "Activate active water-wall radiation shielding matrix", xp: 40 },
           ],
         };
       }
       return {
-        hero: `Radiation dose rate is nominal at background levels (${dose} µSv/h).`,
-        happening: `Secondary hull shielding is holding cosmic galactic baseline with zero energetic proton anomalies.`,
-        why: `Cosmic background exposure is tracked cumulatively against career limits.`,
+        hero: `Radiation environment is nominal at background dose rate of ${dose} µSv/h.`,
+        happening: `Deep-space ionizing radiation levels remain beneath standard ALARA mission exposure constraints.`,
+        why: `Cosmic ray flux is within modeled solar quiet boundaries.`,
         checklist: [
-          { text: "Verify active dosimeter battery charge", xp: 15 },
+          { text: "Verify passive thermoluminescent dosimeter (TLD) readouts", xp: 20 },
         ],
       };
     }
@@ -118,22 +117,22 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
     if (selectedOrgan === "metabolic_endocrine") {
       if (organSeverity === "CRITICAL") {
         return {
-          hero: `Blood glucose crashed to ${bg} mg/dL. Metabolic crisis in progress.`,
-          happening: `Acute hypoglycemia (${bg} mg/dL) paired with thermoregulatory drift (${temp}°C) from depleted glycogen reserves.`,
-          why: `Microgravity slows splanchnic blood flow and alters insulin sensitivity, speeding glucose depletion under heavy EVA workloads.`,
+          hero: `Blood glucose crashed to ${bg} mg/dL with core temperature drift (${temp}°C). Acute hypoglycemia.`,
+          happening: `Acute plasma glucose deficit (${bg} mg/dL) coupled with thermoregulatory instability from depleted glycogen reserves.`,
+          why: `Microgravity alters insulin receptor sensitivity and slows splanchnic nutrient absorption under continuous mission workload.`,
           checklist: [
-            { text: "Ingest 15g fast-acting glucose pouch immediately", xp: 50 },
-            { text: "Set thermal garment active heating to 23.0°C", xp: 30 },
-            { text: "Re-check capillary blood glucose in 10 minutes", xp: 25 },
+            { text: "Ingest 15g fast-acting dextrose nutritional pouch", xp: 50 },
+            { text: "Adjust thermal flight garment active heating to 23.0°C", xp: 30 },
+            { text: "Re-assay capillary blood glucose in 10 minutes", xp: 25 },
           ],
         };
       }
       return {
-        hero: `Metabolic and glycemic regulation are balanced at ${bg} mg/dL.`,
-        happening: `Plasma glucose (${bg} mg/dL) and core body temperature (${temp}°C) indicate nominal cellular metabolism.`,
-        why: `Nutritional macronutrient balances support physical and cognitive demands.`,
+        hero: `Metabolic and glycemic regulation are balanced at ${bg} mg/dL and ${temp}°C.`,
+        happening: `Plasma glucose and core body temperature indicate stable cellular metabolic homeostasis.`,
+        why: `Caloric intake and microgravity thermal convection equilibrium are maintained.`,
         checklist: [
-          { text: "Log nutritional intake for current mission cycle", xp: 20 },
+          { text: "Log nutritional intake and water reconstitution log", xp: 20 },
         ],
       };
     }
@@ -141,23 +140,23 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
     // Neuro-behavioral
     if (organSeverity === "CRITICAL" || organSeverity === "WATCH") {
       return {
-        hero: `Circadian disruption detected with ${sleep}h sleep. Cognitive delay active.`,
-        happening: `Severe sleep fragmentation (${sleep} hours) and desynchronized melatonin phase rhythm.`,
-        why: `Absence of natural 24h sunlight cycles and microgravity sleep disruption impair prefrontal executive attention.`,
+        hero: `Circadian disruption detected with ${sleep}h sleep. Cognitive latency elevation active.`,
+        happening: `Severe sleep fragmentation (${sleep}h) and desynchronized melatonin circadian phase rhythm.`,
+        why: `16 orbital sunrises per day and microgravity sleep architecture degradation impair prefrontal executive cognition.`,
         checklist: [
-          { text: "Shift cabin illumination to 480nm blue-depleted mode", xp: 30 },
+          { text: "Shift cabin ambient illumination to 480nm blue-depleted mode", xp: 30 },
           { text: "Ingest 0.5mg timed-release melatonin supplement", xp: 25 },
-          { text: "Schedule 90-minute protected restorative rest cycle", xp: 40 },
+          { text: "Schedule 90-minute protected restorative sleep cycle", xp: 40 },
         ],
       };
     }
 
     return {
-      hero: `Neuro-cognitive and circadian metrics are nominal with ${sleep}h sleep.`,
+      hero: `Neuro-cognitive and circadian metrics are nominal with ${sleep}h restorative sleep.`,
       happening: `Sleep architecture (${sleep}h) and subjective mood indices reflect stable psychological readiness.`,
-      why: `Circadian entrainment protocols are preserving alertness and reaction latency.`,
+      why: `Circadian lighting entrainment protocols are preserving cognitive alertness and psychomotor reaction latency.`,
       checklist: [
-        { text: "Perform routine 2-minute psychomotor vigilance task", xp: 20 },
+        { text: "Perform routine 2-minute psychomotor vigilance task (PVT)", xp: 20 },
       ],
     };
   };
@@ -166,7 +165,8 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
 
   const handleToggleCheck = async (idx: number, item: { text: string; xp: number }) => {
     const nextState = !checkedSteps[idx];
-    setCheckedSteps((prev) => ({ ...prev, [idx]: nextState }));
+    setCheckedSteps((p) => ({ ...p, [idx]: nextState }));
+
     if (nextState) {
       await onCompleteCountermeasure(
         `quest_${selectedOrgan}_${idx}`,
@@ -181,70 +181,78 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
     e.preventDefault();
     if (!question.trim()) return;
     setCustomReply(
-      `Flight Surgeon (qwen2.5-coder:7b): Based on current ${selectedOrgan} telemetry, ${dossier.hero} Prioritize the countermeasure checklist.`
+      `FLIGHT SURGEON DIRECTIVE: Telemetry evaluation for ${selectedOrgan.toUpperCase()} indicates: "${dossier.hero}". Execute assigned clinical countermeasures immediately.`
     );
     setQuestion("");
   };
 
   return (
-    <div className="w-[340px] h-full flex flex-col justify-between py-3 pr-5 pl-3 select-none rail-right-scrim z-10 overflow-hidden">
+    <div className="w-[340px] h-full flex flex-col justify-between p-4 select-none bg-[#0D1015] border-l border-tactical z-10 overflow-hidden">
       <div className="flex-1 overflow-y-auto pr-1 space-y-3">
-        {/* Rail Header */}
-        <div className="flex items-center justify-between pb-2 hairline-b">
-          <span className="font-ui-medium text-[13px] text-neutral-300">
-            Flight Surgeon Guidance
-          </span>
-          <span className="font-telemetry-mono text-[12px] text-amber-400">
-            qwen2.5-coder:7b
-          </span>
+        {/* Rail Header in Akira / Monospace */}
+        <div className="flex items-center justify-between pb-2.5 border-b border-tactical">
+          <div>
+            <div className="font-akira text-[11px] text-white tracking-widest">
+              FLIGHT SURGEON
+            </div>
+            <div className="font-telemetry-mono text-[10px] text-neutral-400">
+              NASA-STD-3001 // CLINICAL
+            </div>
+          </div>
+          <div className="font-telemetry-mono text-[10px] px-2 py-0.5 bg-[#12151D] border border-tactical text-amber-400 rounded-[2px]">
+            AI_CORE: ACTIVE
+          </div>
         </div>
 
-        {/* HERO SENTENCE: Instrument Serif regular (NEVER bold), 26-28px, line-height 1.1 */}
-        <div className="py-1">
-          <h2 className="font-display-serif text-[26px] text-white leading-[1.15] max-w-[34ch]">
+        {/* HERO ASSESSMENT: Clean Technical Grotesque Sans (NO editorial serifs) */}
+        <div className="p-3 bg-[#12151D] border border-tactical rounded-[2px]">
+          <div className="font-telemetry-mono text-[10px] text-cyan-400 tracking-wider mb-1">
+            &gt; CLINICAL ASSESSMENT SUMMARY
+          </div>
+          <div className="font-ui-sans font-medium text-[14px] text-white leading-snug">
             {dossier.hero}
-          </h2>
+          </div>
         </div>
 
-        {/* Section 1: What is happening */}
-        <div className="pt-2 hairline-t">
+        {/* Section 1: CLINICAL ASSESSMENT */}
+        <div className="pt-2 border-t border-tactical">
           <button
             onClick={() => setOpenSections((p) => ({ ...p, happening: !p.happening }))}
-            className="w-full flex items-center justify-between text-left font-ui-medium text-[13px] text-neutral-300 hover:text-white"
+            className="w-full flex items-center justify-between text-left font-telemetry-mono font-bold text-[11px] text-neutral-300 hover:text-white tracking-wider"
           >
-            <span>What is happening</span>
+            <span>[+] CLINICAL ASSESSMENT</span>
             {openSections.happening ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
           {openSections.happening && (
-            <p className="mt-1.5 font-ui-sans text-[14px] text-neutral-300 leading-[1.5] max-w-[38ch]">
+            <p className="mt-1.5 font-ui-sans text-[13px] text-neutral-300 leading-relaxed bg-[#12151D]/60 p-2.5 rounded-[2px] border border-tactical">
               {dossier.happening}
             </p>
           )}
         </div>
 
-        {/* Section 2: Why it matters in microgravity */}
-        <div className="pt-2 hairline-t">
+        {/* Section 2: MICROGRAVITY IMPACT */}
+        <div className="pt-2 border-t border-tactical">
           <button
             onClick={() => setOpenSections((p) => ({ ...p, why: !p.why }))}
-            className="w-full flex items-center justify-between text-left font-ui-medium text-[13px] text-neutral-300 hover:text-white"
+            className="w-full flex items-center justify-between text-left font-telemetry-mono font-bold text-[11px] text-neutral-300 hover:text-white tracking-wider"
           >
-            <span>Why it matters in microgravity</span>
+            <span>[+] MICROGRAVITY IMPACT</span>
             {openSections.why ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
           {openSections.why && (
-            <p className="mt-1.5 font-ui-sans text-[14px] text-neutral-400 leading-[1.5] max-w-[38ch]">
+            <p className="mt-1.5 font-ui-sans text-[13px] text-neutral-400 leading-relaxed bg-[#12151D]/60 p-2.5 rounded-[2px] border border-tactical">
               {dossier.why}
             </p>
           )}
         </div>
 
-        {/* Section 3: Actionable Countermeasures Checklist */}
-        <div className="pt-2 hairline-t">
+        {/* Section 3: PROTOCOL CHECKLIST */}
+        <div className="pt-2 border-t border-tactical">
           <button
             onClick={() => setOpenSections((p) => ({ ...p, countermeasure: !p.countermeasure }))}
-            className="w-full flex items-center justify-between text-left font-ui-medium text-[13px] text-neutral-300 hover:text-white"
+            className="w-full flex items-center justify-between text-left font-telemetry-mono font-bold text-[11px] text-neutral-300 hover:text-white tracking-wider"
           >
-            <span>Actionable countermeasures</span>
+            <span>[+] PROTOCOL CHECKLIST</span>
             {openSections.countermeasure ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
@@ -256,28 +264,29 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
                   <div
                     key={idx}
                     onClick={() => handleToggleCheck(idx, item)}
-                    className={`p-2 rounded border transition-colors cursor-pointer flex items-start gap-2.5 ${
+                    className={`p-2.5 rounded-[2px] border transition-colors cursor-pointer flex items-start gap-2.5 ${
                       isDone
-                        ? "bg-emerald-950/30 border-emerald-500/30 text-emerald-200"
-                        : "bg-neutral-900/50 hover:bg-neutral-800/60 border-white/10 text-neutral-200"
+                        ? "bg-emerald-950/25 border-emerald-500/40 text-emerald-200"
+                        : "bg-[#12151D] hover:bg-[#161B26] border-tactical text-neutral-200"
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 rounded mt-0.5 flex-shrink-0 flex items-center justify-center border transition-colors ${
+                      className={`w-4 h-4 rounded-[1px] mt-0.5 flex-shrink-0 flex items-center justify-center border transition-colors ${
                         isDone
                           ? "bg-emerald-500 border-emerald-400 text-black"
-                          : "border-white/30 bg-black/40"
+                          : "border-white/20 bg-black/50"
                       }`}
                     >
                       {isDone && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
 
-                    <div className="flex-1 font-ui-sans text-[13px] leading-snug">
+                    <div className="flex-1 font-ui-sans text-[12px] leading-snug">
                       <div className={isDone ? "line-through opacity-70" : ""}>
                         {item.text}
                       </div>
-                      <div className="font-telemetry-mono text-[11px] text-amber-400 mt-0.5">
-                        +{item.xp} XP
+                      {/* Subtle protocol completion weight */}
+                      <div className="font-telemetry-mono text-[10px] text-cyan-400 mt-1">
+                        PROTOCOL WEIGHT: {(item.xp / 100).toFixed(2)} // LOG VERIFIED
                       </div>
                     </div>
                   </div>
@@ -289,24 +298,25 @@ export const FlightSurgeonPanel: React.FC<FlightSurgeonPanelProps> = ({
 
         {/* Custom reply if asked */}
         {customReply && (
-          <div className="p-2.5 rounded bg-neutral-900/70 border border-white/15 text-[13px] font-ui-sans text-neutral-200 mt-2">
+          <div className="p-2.5 rounded-[2px] bg-[#12151D] border border-cyan-500/30 text-[12px] font-telemetry-mono text-neutral-200 mt-2">
             {customReply}
           </div>
         )}
       </div>
 
-      {/* Ask the Flight Surgeon query bar */}
-      <form onSubmit={handleAsk} className="pt-2 mt-1 hairline-t flex items-center gap-2">
+      {/* Flight Surgeon Command Prompt */}
+      <form onSubmit={handleAsk} className="pt-2.5 mt-2 border-t border-tactical flex items-center gap-2">
         <input
           type="text"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Ask flight surgeon..."
-          className="flex-1 bg-neutral-900/70 text-neutral-200 text-[13px] font-ui-sans px-3 py-1.5 rounded border border-white/15 focus:border-amber-400/60 outline-none placeholder:text-neutral-500"
+          placeholder="ENTER MEDICAL QUERY..."
+          className="flex-1 bg-[#12151D] text-neutral-200 text-[11px] font-telemetry-mono px-3 py-1.5 rounded-[2px] border border-tactical focus:border-cyan-400 outline-none placeholder:text-neutral-500 tracking-wider"
         />
         <button
           type="submit"
-          className="p-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-white/15 transition-colors"
+          className="p-1.5 rounded-[2px] bg-[#161B26] hover:bg-[#1E2536] text-cyan-300 border border-tactical transition-colors"
+          title="Submit Clinical Query"
         >
           <Send className="w-3.5 h-3.5" />
         </button>

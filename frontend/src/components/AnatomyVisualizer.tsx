@@ -12,15 +12,16 @@ interface AnatomyVisualizerProps {
 
 interface SystemInfo {
   id: OrganSystem;
+  code: string;
   name: string;
   metricLabel: string;
 }
 
 const SYSTEMS: SystemInfo[] = [
-  { id: "cardiovascular", name: "Cardiovascular", metricLabel: "Pulse & blood pressure" },
-  { id: "neuro_behavioral", name: "Neuro-behavioral", metricLabel: "Circadian sleep & cognition" },
-  { id: "metabolic_endocrine", name: "Metabolic / endocrine", metricLabel: "Blood glucose & core temp" },
-  { id: "immune_radiation", name: "Immune / radiation", metricLabel: "SPE flux & bone marrow" },
+  { id: "cardiovascular", code: "SYS.01", name: "Cardiovascular", metricLabel: "Pulse & Arterial Pressure" },
+  { id: "neuro_behavioral", code: "SYS.02", name: "Neuro-Behavioral", metricLabel: "Circadian Phase & Cognition" },
+  { id: "metabolic_endocrine", code: "SYS.03", name: "Metabolic / Endocrine", metricLabel: "Blood Glucose & Core Temp" },
+  { id: "immune_radiation", code: "SYS.04", name: "Immune / Radiation", metricLabel: "SPE Proton Flux & Marrow" },
 ];
 
 export const AnatomyVisualizer: React.FC<AnatomyVisualizerProps> = ({
@@ -32,114 +33,119 @@ export const AnatomyVisualizer: React.FC<AnatomyVisualizerProps> = ({
   const getDescriptor = (sev: Severity) => {
     switch (sev) {
       case "CRITICAL":
-        return { word: "Act", shape: "■", color: "text-red-400 bg-red-950/60 border-red-500/40", dot: "#EF4444" };
+        return {
+          code: "CRITICAL",
+          className: "bg-red-500/10 border border-red-500/30 border-l-2 border-l-red-500 text-red-400",
+          dot: "#EF4444",
+        };
       case "WATCH":
-        return { word: "Watch", shape: "▲", color: "text-amber-400 bg-amber-950/60 border-amber-500/40", dot: "#F59E0B" };
+        return {
+          code: "CAUTION",
+          className: "bg-amber-500/10 border border-amber-500/30 border-l-2 border-l-amber-500 text-amber-400",
+          dot: "#F59E0B",
+        };
       case "NOMINAL":
       default:
-        return { word: "Normal", shape: "●", color: "text-emerald-400 bg-emerald-950/60 border-emerald-500/40", dot: "#10B981" };
+        return {
+          code: "NOMINAL",
+          className: "bg-emerald-500/10 border border-emerald-500/30 border-l-2 border-l-emerald-500 text-emerald-400",
+          dot: "#10B981",
+        };
     }
   };
 
   return (
-    <div className="w-[280px] h-full flex flex-col justify-between py-3 pl-5 pr-2 select-none rail-left-scrim z-10">
-      {/* Top title */}
+    <div className="w-[280px] h-full flex flex-col justify-between p-4 select-none bg-[#0D1015] border-r border-tactical z-10">
+      {/* Top Header */}
       <div>
-        <div className="flex items-center justify-between pb-2 mb-2 hairline-b">
-          <span className="font-ui-medium text-[13px] text-neutral-300">Organ systems</span>
-          <span className="font-telemetry-mono text-[12px] text-neutral-400">
-            ML index: {Math.round(anomalyScore * 100)}%
-          </span>
+        <div className="flex items-center justify-between pb-3 mb-3 border-b border-tactical">
+          <div>
+            <div className="font-akira text-[11px] text-white tracking-widest">
+              SYSTEM TELEMETRY
+            </div>
+            <div className="font-telemetry-mono text-[10px] text-neutral-400">
+              BIO_BUS: ACTIVE // 1Hz
+            </div>
+          </div>
+          <div className="font-telemetry-mono text-[11px] px-2 py-0.5 bg-[#12151D] border border-tactical text-neutral-300 rounded-[2px]">
+            ANOM: {Math.round(anomalyScore * 100)}%
+          </div>
         </div>
 
-        {/* Minimal anatomical wireframe silhouette with interactive nodes */}
-        <div className="relative w-full h-[190px] flex items-center justify-center my-1">
-          <svg viewBox="0 0 160 220" className="w-full h-full max-h-[190px] opacity-80" fill="none">
-            {/* Luminous line & particle astronaut figure */}
-            <circle cx="80" cy="24" r="14" stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="2 2" />
-            <path d="M 80,38 L 80,110" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-            <path d="M 80,50 L 44,88 L 32,130" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-            <path d="M 80,50 L 116,88 L 128,130" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-            <path d="M 80,110 L 56,165 L 52,212" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-            <path d="M 80,110 L 104,165 L 108,212" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-            
-            {/* Subtle rib cage arc */}
-            <path d="M 64,68 Q 80,74 96,68" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
-            <path d="M 66,80 Q 80,86 94,80" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
+        {/* Tactical Anatomical Vector Node Map */}
+        <div className="relative w-full h-[180px] bg-[#12151D]/60 border border-tactical rounded-[2px] flex items-center justify-center my-2 p-2 overflow-hidden">
+          {/* Subtle grid background */}
+          <div className="absolute inset-0 tactical-grid-bg opacity-30 pointer-events-none" />
 
-            {/* Organ Nodes */}
+          <svg viewBox="0 0 160 210" className="w-full h-full max-h-[175px]" fill="none">
+            {/* Minimal technical silhouette lines */}
+            <circle cx="80" cy="24" r="14" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="3 2" />
+            <line x1="80" y1="38" x2="80" y2="105" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
+            <path d="M 80,48 L 44,82 L 34,124" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+            <path d="M 80,48 L 116,82 L 126,124" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+            <path d="M 80,105 L 56,155 L 52,200" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+            <path d="M 80,105 L 104,155 L 108,200" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+
+            {/* Thoracic rib cage brackets */}
+            <path d="M 64,64 Q 80,70 96,64" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            <path d="M 66,76 Q 80,82 94,76" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+
             {/* 1. Neuro (Cranial) */}
-            <g
-              className="cursor-pointer"
-              onClick={() => onSelectOrgan("neuro_behavioral")}
-            >
+            <g className="cursor-pointer" onClick={() => onSelectOrgan("neuro_behavioral")}>
               <circle
                 cx="80"
                 cy="24"
-                r={selectedOrgan === "neuro_behavioral" ? 8 : 5}
+                r={selectedOrgan === "neuro_behavioral" ? 6 : 4}
                 fill={getDescriptor(organStatus.neuro_behavioral).dot}
-                className="transition-all"
               />
               {selectedOrgan === "neuro_behavioral" && (
-                <circle cx="80" cy="24" r="12" stroke={getDescriptor(organStatus.neuro_behavioral).dot} strokeWidth="1" strokeDasharray="3 3" />
+                <rect x="71" y="15" width="18" height="18" stroke={getDescriptor(organStatus.neuro_behavioral).dot} strokeWidth="1" fill="none" strokeDasharray="2 2" />
               )}
             </g>
 
             {/* 2. Cardiovascular (Thoracic) */}
-            <g
-              className="cursor-pointer"
-              onClick={() => onSelectOrgan("cardiovascular")}
-            >
+            <g className="cursor-pointer" onClick={() => onSelectOrgan("cardiovascular")}>
               <circle
                 cx="84"
-                cy="68"
-                r={selectedOrgan === "cardiovascular" ? 9 : 6}
+                cy="66"
+                r={selectedOrgan === "cardiovascular" ? 7 : 5}
                 fill={getDescriptor(organStatus.cardiovascular).dot}
-                className="transition-all"
               />
               {selectedOrgan === "cardiovascular" && (
-                <circle cx="84" cy="68" r="14" stroke={getDescriptor(organStatus.cardiovascular).dot} strokeWidth="1" strokeDasharray="3 3" />
+                <rect x="74" y="56" width="20" height="20" stroke={getDescriptor(organStatus.cardiovascular).dot} strokeWidth="1" fill="none" strokeDasharray="2 2" />
               )}
             </g>
 
-            {/* 3. Metabolic / Endocrine (Abdominal) */}
-            <g
-              className="cursor-pointer"
-              onClick={() => onSelectOrgan("metabolic_endocrine")}
-            >
+            {/* 3. Metabolic (Abdominal) */}
+            <g className="cursor-pointer" onClick={() => onSelectOrgan("metabolic_endocrine")}>
               <circle
                 cx="80"
-                cy="92"
-                r={selectedOrgan === "metabolic_endocrine" ? 8 : 5}
+                cy="90"
+                r={selectedOrgan === "metabolic_endocrine" ? 6 : 4}
                 fill={getDescriptor(organStatus.metabolic_endocrine).dot}
-                className="transition-all"
               />
               {selectedOrgan === "metabolic_endocrine" && (
-                <circle cx="80" cy="92" r="13" stroke={getDescriptor(organStatus.metabolic_endocrine).dot} strokeWidth="1" strokeDasharray="3 3" />
+                <rect x="71" y="81" width="18" height="18" stroke={getDescriptor(organStatus.metabolic_endocrine).dot} strokeWidth="1" fill="none" strokeDasharray="2 2" />
               )}
             </g>
 
-            {/* 4. Immune / Radiation (Thymus / Bone Marrow / Spine) */}
-            <g
-              className="cursor-pointer"
-              onClick={() => onSelectOrgan("immune_radiation")}
-            >
+            {/* 4. Immune (Sternal/Marrow) */}
+            <g className="cursor-pointer" onClick={() => onSelectOrgan("immune_radiation")}>
               <circle
                 cx="74"
-                cy="54"
-                r={selectedOrgan === "immune_radiation" ? 8 : 5}
+                cy="52"
+                r={selectedOrgan === "immune_radiation" ? 6 : 4}
                 fill={getDescriptor(organStatus.immune_radiation).dot}
-                className="transition-all"
               />
               {selectedOrgan === "immune_radiation" && (
-                <circle cx="74" cy="54" r="13" stroke={getDescriptor(organStatus.immune_radiation).dot} strokeWidth="1" strokeDasharray="3 3" />
+                <rect x="65" y="43" width="18" height="18" stroke={getDescriptor(organStatus.immune_radiation).dot} strokeWidth="1" fill="none" strokeDasharray="2 2" />
               )}
             </g>
           </svg>
         </div>
       </div>
 
-      {/* 4 Organ Systems List */}
+      {/* 4 Organ Systems Tactical List */}
       <div className="space-y-1.5 mt-2">
         {SYSTEMS.map((sys) => {
           const sev = organStatus[sys.id] || "NOMINAL";
@@ -150,30 +156,43 @@ export const AnatomyVisualizer: React.FC<AnatomyVisualizerProps> = ({
             <button
               key={sys.id}
               onClick={() => onSelectOrgan(sys.id)}
-              className={`w-full text-left p-2 rounded transition-all flex items-center justify-between ${
+              className={`w-full text-left p-2.5 rounded-[2px] transition-all flex items-center justify-between border ${
                 isSelected
-                  ? "bg-white/10 border border-white/20"
-                  : "bg-transparent hover:bg-white/5 border border-transparent"
+                  ? "bg-[#161B26] border-white/20 shadow-md"
+                  : "bg-[#12151D]/60 hover:bg-[#161B26]/80 border-tactical"
               }`}
             >
               <div className="min-w-0 pr-2">
-                <div className="font-ui-medium text-[13px] text-neutral-200 truncate">
-                  {sys.name}
+                <div className="flex items-center gap-2">
+                  <span className="font-telemetry-mono text-[10px] text-neutral-400">
+                    {sys.code}
+                  </span>
+                  <span className="font-ui-medium text-[13px] text-neutral-200 truncate">
+                    {sys.name}
+                  </span>
                 </div>
-                <div className="text-[12px] text-neutral-400 font-ui-sans truncate">
+                <div className="text-[11px] text-neutral-400 font-telemetry-mono truncate mt-0.5">
                   {sys.metricLabel}
                 </div>
               </div>
 
-              <div className="flex-shrink-0 flex items-center gap-1 font-telemetry-mono text-[12px]">
-                <span className={`px-1.5 py-0.5 rounded border text-[11px] font-ui-medium flex items-center gap-1 ${desc.color}`}>
-                  <span>{desc.shape}</span>
-                  <span>{desc.word}</span>
+              {/* Crisp 2px-radius rectangular status tag without drop shadow or glow */}
+              <div className="flex-shrink-0">
+                <span
+                  className={`px-2 py-0.5 rounded-[2px] text-[10px] font-telemetry-mono font-bold tracking-wider ${desc.className}`}
+                >
+                  {desc.code}
                 </span>
               </div>
             </button>
           );
         })}
+      </div>
+
+      {/* Footer Info */}
+      <div className="pt-3 mt-2 border-t border-tactical flex items-center justify-between text-[10px] font-telemetry-mono text-neutral-400">
+        <span>SENSOR PROTOCOL: NASA-3001</span>
+        <span>CH: 04/04</span>
       </div>
     </div>
   );

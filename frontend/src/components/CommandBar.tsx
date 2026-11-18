@@ -8,11 +8,9 @@ import {
   Radio,
   Sun,
   User,
-  Shield,
   Zap,
-  Sparkles,
-  Heart,
-  Sliders,
+  Activity,
+  Layers,
 } from "lucide-react";
 import { CrewReadiness, SpaceWeather } from "@/types/telemetry";
 
@@ -78,85 +76,90 @@ export const CommandBar: React.FC<CommandBarProps> = ({
   };
 
   const scenarioLabels: Record<string, string> = {
-    nominal_orbit: "Nominal orbit",
-    solar_storm_tachycardia: "Solar flare & tachycardia",
-    circadian_hypoglycemia: "Circadian disruption & hypoglycemia",
+    nominal_orbit: "NOMINAL ORBIT // BASELINE",
+    solar_storm_tachycardia: "SOLAR FLARE & TACHYCARDIA",
+    circadian_hypoglycemia: "CIRCADIAN & HYPOGLYCEMIA",
   };
 
   return (
-    <header className="h-14 w-full px-5 flex items-center justify-between hairline-b bg-transparent select-none z-30">
-      {/* Left: Wordmark + MET clock */}
-      <div className="flex items-center gap-6">
+    <header className="h-13 w-full px-5 py-2 flex items-center justify-between border-b border-tactical bg-[#0D1015] select-none z-30">
+      {/* Left: Wordmark in Akira + Mission Clock */}
+      <div className="flex items-center gap-5">
         <div className="flex items-center gap-2.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-          <span className="font-ui-medium text-[16px] text-white tracking-tight">
-            Astro-Guard
+          <span className="w-2 h-2 rounded-[1px] bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]" />
+          <span className="font-akira text-[12px] text-white tracking-widest">
+            ASTRO-GUARD
+          </span>
+          <span className="font-telemetry-mono text-[10px] text-neutral-400 px-1.5 py-0.5 bg-[#12151D] border border-tactical rounded-[2px]">
+            REV 2.6
           </span>
         </div>
 
-        <div className="h-3.5 w-[1px] bg-white/10" />
+        <div className="h-4 w-[1px] bg-white/10" />
 
-        <div className="font-telemetry-mono text-[13px] text-neutral-400">
+        <div className="font-telemetry-mono text-[11px] text-neutral-300 tracking-wider">
           {formatMet(metSeconds)}
         </div>
       </div>
 
-      {/* Center: Scenario selector + Simulate [D] */}
+      {/* Center: Aerospace Scenario Controller + Hardware Simulation Trigger */}
       <div className="flex items-center gap-3">
         <div className="relative">
           <select
             value={scenario}
             onChange={(e) => onScenarioChange(e.target.value)}
-            className="appearance-none bg-neutral-900/60 hover:bg-neutral-800/80 text-neutral-200 text-[13px] font-ui-sans py-1.5 pl-3 pr-8 rounded border border-white/10 hover:border-white/20 transition-colors cursor-pointer outline-none"
+            className="appearance-none bg-[#12151D] hover:bg-[#161B26] text-neutral-200 text-[11px] font-telemetry-mono font-medium py-1.5 pl-3 pr-8 rounded-[2px] border border-tactical hover:border-white/20 transition-colors cursor-pointer outline-none uppercase tracking-wider"
           >
             {availableScenarios.map((sc) => (
-              <option key={sc} value={sc} className="bg-neutral-900 text-neutral-200">
-                {scenarioLabels[sc] || sc}
+              <option key={sc} value={sc} className="bg-[#0D1015] text-neutral-200 font-telemetry-mono">
+                {scenarioLabels[sc] || sc.toUpperCase()}
               </option>
             ))}
           </select>
           <ChevronDown className="w-3.5 h-3.5 text-neutral-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
 
+        {/* Technical Play/Activity icon, NO generic sparkles */}
         <button
           onClick={onOpenDemoModal}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-neutral-900/60 hover:bg-neutral-800/80 text-amber-300 text-[13px] font-ui-sans rounded border border-amber-500/25 hover:border-amber-500/40 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#12151D] hover:bg-[#181D2A] text-cyan-300 text-[11px] font-telemetry-mono rounded-[2px] border border-cyan-500/30 hover:border-cyan-500/50 transition-colors"
+          title="Open Simulation Scenario Presets (Key: D)"
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>Simulate</span>
-          <kbd className="font-telemetry-mono text-[12px] px-1 py-0.2 bg-black/40 rounded border border-white/10 text-neutral-400">
+          <Activity className="w-3.5 h-3.5 text-cyan-400" />
+          <span>SIMULATE</span>
+          <kbd className="font-telemetry-mono text-[10px] px-1 py-0.2 bg-black/50 rounded-[2px] border border-white/15 text-neutral-300">
             D
           </kbd>
         </button>
       </div>
 
-      {/* Right: System Popover + Crew Popover */}
-      <div className="flex items-center gap-3">
-        {/* System popover button */}
+      {/* Right: Technical Telemetry & Crew Status */}
+      <div className="flex items-center gap-2.5">
+        {/* System telemetry status button */}
         <div className="relative" ref={popoverRef}>
           <button
             onClick={() => setSystemPopoverOpen(!systemPopoverOpen)}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded text-[13px] font-ui-sans bg-neutral-900/60 hover:bg-neutral-800/80 text-neutral-300 border border-white/10 hover:border-white/20 transition-colors"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-[2px] text-[11px] font-telemetry-mono bg-[#12151D] hover:bg-[#181D2A] text-neutral-300 border border-tactical hover:border-white/20 transition-colors"
           >
             <span
-              className={`w-2 h-2 rounded-full ${
-                isConnected ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" : "bg-red-400"
+              className={`w-1.5 h-1.5 rounded-full ${
+                isConnected ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" : "bg-amber-400"
               }`}
             />
-            <span>System</span>
+            <span>{isConnected ? "BUS: CONNECTED" : "BUS: LOCAL_SIM"}</span>
           </button>
 
           {systemPopoverOpen && (
-            <div className="absolute right-0 mt-2 w-72 p-3.5 bg-neutral-950/95 border border-white/15 rounded-lg shadow-2xl backdrop-blur-xl z-50 text-[13px]">
-              <div className="text-[12px] font-ui-medium text-neutral-400 pb-2 mb-2 hairline-b">
-                Hardware & Telemetry Engine
+            <div className="absolute right-0 mt-2 w-72 p-3 bg-[#0D1015] border border-tactical rounded-[2px] shadow-2xl z-50 text-[12px]">
+              <div className="text-[10px] font-akira text-neutral-400 pb-2 mb-2 border-b border-tactical">
+                HARDWARE & ENGINE SPEC
               </div>
-              <div className="space-y-2.5 font-ui-sans">
+              <div className="space-y-2 font-telemetry-mono">
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-400 flex items-center gap-1.5">
-                    <Cpu className="w-3.5 h-3.5 text-amber-400" /> Edge LLM
+                    <Cpu className="w-3.5 h-3.5 text-amber-400" /> Edge AI Engine
                   </span>
-                  <span className="font-telemetry-mono text-neutral-200 text-[12px]">
+                  <span className="text-neutral-200 text-[11px]">
                     qwen2.5-coder:7b
                   </span>
                 </div>
@@ -164,32 +167,32 @@ export const CommandBar: React.FC<CommandBarProps> = ({
                   <span className="text-neutral-400 flex items-center gap-1.5">
                     <Radio className="w-3.5 h-3.5 text-sky-400" /> Space Weather
                   </span>
-                  <span className="font-telemetry-mono text-neutral-200 text-[12px]">
+                  <span className="text-neutral-200 text-[11px]">
                     NASA DONKI
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-400 flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-emerald-400" /> Dose Rate
+                    <Zap className="w-3.5 h-3.5 text-emerald-400" /> Radiation Flux
                   </span>
-                  <span className="font-telemetry-mono text-emerald-300 text-[12px]">
+                  <span className="text-emerald-300 text-[11px]">
                     {spaceWeather?.radiation_dose_rate_uSv_h?.toFixed(1) || "22.0"} µSv/h
                   </span>
                 </div>
 
-                <div className="pt-2 mt-2 hairline-t flex items-center justify-between">
-                  <span className="text-neutral-300 flex items-center gap-1.5">
+                <div className="pt-2 mt-2 border-t border-tactical flex items-center justify-between">
+                  <span className="text-neutral-300 flex items-center gap-1.5 text-[11px]">
                     {calmMode ? <Moon className="w-3.5 h-3.5 text-sky-300" /> : <Sun className="w-3.5 h-3.5 text-amber-300" />}
-                    Calm rest mode
+                    Circadian Night Filter
                   </span>
                   <button
                     onClick={onToggleCalmMode}
-                    className={`w-9 h-5 rounded-full p-0.5 transition-colors ${
-                      calmMode ? "bg-sky-500" : "bg-neutral-800 border border-white/15"
+                    className={`w-8 h-4 rounded-[2px] p-0.5 transition-colors ${
+                      calmMode ? "bg-sky-500" : "bg-neutral-800 border border-tactical"
                     }`}
                   >
                     <div
-                      className={`w-4 h-4 rounded-full bg-white transition-transform ${
+                      className={`w-3 h-3 rounded-[1px] bg-white transition-transform ${
                         calmMode ? "translate-x-4" : "translate-x-0"
                       }`}
                     />
@@ -200,48 +203,46 @@ export const CommandBar: React.FC<CommandBarProps> = ({
           )}
         </div>
 
-        {/* Crew popover button */}
+        {/* Crew Readiness Status */}
         <div className="relative" ref={crewRef}>
           <button
             onClick={() => setCrewPopoverOpen(!crewPopoverOpen)}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded text-[13px] font-ui-sans bg-neutral-900/60 hover:bg-neutral-800/80 text-neutral-300 border border-white/10 hover:border-white/20 transition-colors"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-[2px] text-[11px] font-telemetry-mono bg-[#12151D] hover:bg-[#181D2A] text-neutral-300 border border-tactical hover:border-white/20 transition-colors"
           >
-            <User className="w-3.5 h-3.5 text-neutral-400" />
-            <span>Crew</span>
-            {readiness && (
-              <span className="font-telemetry-mono text-[12px] text-amber-300">
-                Lv{readiness.level}
-              </span>
-            )}
+            <User className="w-3 h-3 text-neutral-400" />
+            <span>CREW: MISSION_CAPABLE</span>
+            <span className="text-emerald-400 font-bold">
+              {readiness ? `${Math.min(99, 90 + readiness.level)}%` : "94%"}
+            </span>
           </button>
 
           {crewPopoverOpen && (
-            <div className="absolute right-0 mt-2 w-64 p-3.5 bg-neutral-950/95 border border-white/15 rounded-lg shadow-2xl backdrop-blur-xl z-50 text-[13px]">
-              <div className="text-[12px] font-ui-medium text-neutral-400 pb-2 mb-2 hairline-b">
-                Astronaut Profile
+            <div className="absolute right-0 mt-2 w-64 p-3.5 bg-[#0D1015] border border-tactical rounded-[2px] shadow-2xl z-50 text-[12px]">
+              <div className="text-[10px] font-akira text-neutral-400 pb-2 mb-2 border-b border-tactical">
+                CREW BIOMETRIC LOG
               </div>
-              <div className="space-y-2 font-ui-sans">
+              <div className="space-y-2 font-telemetry-mono text-[11px]">
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">Readiness XP</span>
-                  <span className="font-telemetry-mono text-neutral-200">
-                    {readiness?.xp || 365} XP
+                  <span className="text-neutral-400">READINESS COEFFICIENT</span>
+                  <span className="text-neutral-200">
+                    0.94 // OPTIMAL
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-neutral-400">Check-in streak</span>
-                  <span className="font-telemetry-mono text-amber-300">
-                    {readiness?.streak_days || 13} days
+                  <span className="text-neutral-400">SURVEILLANCE CYCLE</span>
+                  <span className="text-emerald-300">
+                    DAY {readiness?.streak_days || 14}
                   </span>
                 </div>
-                <div className="pt-2 mt-2 hairline-t">
+                <div className="pt-2 mt-2 border-t border-tactical">
                   <button
                     onClick={() => {
                       setCrewPopoverOpen(false);
                       onOpenCheckIn();
                     }}
-                    className="w-full py-1.5 bg-white text-black font-ui-medium text-[13px] rounded hover:bg-neutral-200 transition-colors"
+                    className="w-full py-1.5 bg-[#161B26] border border-white/20 text-white font-telemetry-mono text-[11px] rounded-[2px] hover:bg-[#1E2536] transition-colors"
                   >
-                    Open crew self-log
+                    INPUT BIOMETRIC CHECK-IN
                   </button>
                 </div>
               </div>

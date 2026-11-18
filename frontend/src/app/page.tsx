@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { BlackHole } from "@/blackhole/BlackHole";
+import { TacticalViewport } from "@/components/TacticalViewport";
 import { AnatomyVisualizer } from "@/components/AnatomyVisualizer";
 import { FlightSurgeonPanel } from "@/components/FlightSurgeonPanel";
 import { VitalsCharts, VitalsHistoryPoint } from "@/components/VitalsCharts";
@@ -426,11 +426,19 @@ export default function AstroGuardDashboard() {
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
-        background: "#000000",
+        background: "#090A0D",
       }}
     >
-      {/* ── Layer 0: Black hole canvas (fullscreen, behind everything) ── */}
-      <BlackHole anomaly={anomalyScore} bpm={bpm} shiftX={shiftX} />
+      {/* ── Layer 0: Aerospace Tactical Telemetry Viewport (Centerpiece) ── */}
+      <TacticalViewport
+        selectedOrgan={selectedOrgan}
+        organStatus={organStatus}
+        anomalyScore={anomalyScore}
+        bpm={bpm}
+        currentVitals={currentVitals}
+        spaceWeather={spaceWeather}
+        onSelectOrgan={handleSelectOrgan}
+      />
 
       {/* ── Layer 1: Top command bar ── */}
       <div
@@ -465,8 +473,8 @@ export default function AstroGuardDashboard() {
           bottom: "24vh",
           width: "280px",
           zIndex: 15,
-          background:
-            "linear-gradient(to right, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
+          background: "#0D1015",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
           display: "flex",
           alignItems: "stretch",
         }}
@@ -488,8 +496,8 @@ export default function AstroGuardDashboard() {
           bottom: "24vh",
           width: "340px",
           zIndex: 15,
-          background:
-            "linear-gradient(to left, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
+          background: "#0D1015",
+          borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
           display: "flex",
           alignItems: "stretch",
           overflowY: "auto",
@@ -516,8 +524,8 @@ export default function AstroGuardDashboard() {
           right: 0,
           height: "24vh",
           zIndex: 15,
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.60) 60%, transparent 100%)",
+          background: "#090A0D",
+          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
         }}
       >
         <VitalsCharts

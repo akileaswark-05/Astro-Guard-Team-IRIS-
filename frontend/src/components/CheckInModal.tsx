@@ -44,35 +44,40 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="bg-neutral-950/95 max-w-md w-full p-6 shadow-2xl relative rounded-lg border border-white/15">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 select-none animate-fadeIn">
+      <div className="bg-[#0D1015] max-w-md w-full p-6 shadow-2xl relative rounded-[2px] border border-tactical">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-400 hover:text-white p-1 rounded"
+          className="absolute top-4 right-4 text-neutral-400 hover:text-white p-1 rounded-[2px] border border-tactical hover:bg-[#161B26]"
           aria-label="Close modal"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
-        <div className="flex items-center gap-2.5 mb-4 pb-3 hairline-b">
-          <div className="w-7 h-7 rounded bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-tactical">
+          <div className="w-7 h-7 rounded-[2px] bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
             <UserCheck className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-ui-medium text-[16px] text-white">
-              Daily astronaut check-in
+            <h3 className="font-akira text-[12px] text-white tracking-widest">
+              BIOMETRIC SELF-LOG
             </h3>
-            <span className="text-[12px] font-telemetry-mono text-neutral-400">
-              Subjective resilience & sleep logging
-            </span>
+            <p className="font-telemetry-mono text-[10px] text-neutral-400">
+              NASA HRP // SUBJECTIVE READINESS
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <div className="flex justify-between items-center mb-1 text-[13px] font-ui-sans">
-              <label className="text-neutral-300">Mood score</label>
-              <span className="font-telemetry-mono text-amber-400">{mood}/10</span>
+          {/* Mood / Cognitive Readiness Slider */}
+          <div className="p-3 bg-[#12151D] border border-tactical rounded-[2px]">
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="font-akira text-[10px] text-neutral-300 tracking-wider">
+                PSYCHOLOGICAL READINESS
+              </label>
+              <span className="font-telemetry-mono text-[13px] text-cyan-400 font-bold">
+                {Number(mood).toFixed(1)} / 10.0
+              </span>
             </div>
             <input
               type="range"
@@ -81,66 +86,85 @@ export const CheckInModal: React.FC<CheckInModalProps> = ({
               step="0.5"
               value={mood}
               onChange={(e) => setMood(parseFloat(e.target.value))}
-              className="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg appearance-none cursor-pointer"
+              className="w-full h-1.5 bg-neutral-800 rounded-none accent-cyan-400 cursor-pointer"
             />
+            <div className="flex justify-between text-[10px] font-telemetry-mono text-neutral-500 mt-1">
+              <span>ACUTE FATIGUE</span>
+              <span>NOMINAL ALERTNESS</span>
+            </div>
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-1 text-[13px] font-ui-sans">
-              <label className="text-neutral-300">Sleep hours</label>
-              <span className="font-telemetry-mono text-amber-400">{sleep} h</span>
+          {/* Sleep Hours Slider */}
+          <div className="p-3 bg-[#12151D] border border-tactical rounded-[2px]">
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="font-akira text-[10px] text-neutral-300 tracking-wider">
+                CIRCADIAN SLEEP RECORD
+              </label>
+              <span className="font-telemetry-mono text-[13px] text-cyan-400 font-bold">
+                {Number(sleep).toFixed(1)} h
+              </span>
             </div>
             <input
               type="range"
-              min="2"
+              min="0"
               max="12"
               step="0.5"
               value={sleep}
               onChange={(e) => setSleep(parseFloat(e.target.value))}
-              className="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg appearance-none cursor-pointer"
+              className="w-full h-1.5 bg-neutral-800 rounded-none accent-cyan-400 cursor-pointer"
             />
+            <div className="flex justify-between text-[10px] font-telemetry-mono text-neutral-500 mt-1">
+              <span>0h (DEPLETED)</span>
+              <span>8h (CIRCADIAN_NOM)</span>
+              <span>12h</span>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-[13px] font-ui-sans text-neutral-300 mb-1">
-              Capillary blood glucose (mg/dL)
+          {/* Capillary Glucose Input */}
+          <div className="p-3 bg-[#12151D] border border-tactical rounded-[2px]">
+            <label className="block font-akira text-[10px] text-neutral-300 tracking-wider mb-1.5">
+              CAPILLARY GLUCOSE (mg/dL)
             </label>
             <input
               type="number"
+              min="40"
+              max="300"
               value={bloodSugar}
               onChange={(e) => setBloodSugar(e.target.value)}
               placeholder="e.g. 95"
-              className="w-full bg-neutral-900 border border-white/15 rounded px-3 py-1.5 font-telemetry-mono text-[13px] text-white focus:border-amber-400 outline-none"
+              className="w-full bg-[#090A0D] border border-tactical rounded-[2px] p-2 text-white font-telemetry-mono text-[13px] focus:border-cyan-400 outline-none"
             />
           </div>
 
-          <div>
-            <label className="block text-[13px] font-ui-sans text-neutral-300 mb-1">
-              Clinical notes / observations
+          {/* Clinical Symptom Notes */}
+          <div className="p-3 bg-[#12151D] border border-tactical rounded-[2px]">
+            <label className="block font-akira text-[10px] text-neutral-300 tracking-wider mb-1.5">
+              PHYSIOLOGICAL OBSERVATION NOTES
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Head fullness, vestibular motion sickness, visual phosphenes..."
-              className="w-full bg-neutral-900 border border-white/15 rounded p-2 text-[13px] font-ui-sans text-white focus:border-amber-400 outline-none resize-none"
+              placeholder="Subjective sensory or vestibulocochlear symptoms..."
+              className="w-full bg-[#090A0D] border border-tactical rounded-[2px] p-2 text-white font-ui-sans text-[12px] focus:border-cyan-400 outline-none resize-none placeholder:text-neutral-600"
             />
           </div>
 
-          <div className="pt-2 hairline-t flex justify-end gap-2.5">
+          {/* Submit Button */}
+          <div className="pt-2 flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-1.5 text-[13px] font-ui-sans text-neutral-400 hover:text-white transition-colors"
+              className="flex-1 py-2 rounded-[2px] border border-tactical font-telemetry-mono text-[11px] text-neutral-400 hover:bg-[#161B26] transition-colors"
             >
-              Cancel
+              ABORT
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-1.5 bg-white text-black font-ui-medium text-[13px] rounded hover:bg-neutral-200 transition-colors disabled:opacity-50"
+              className="flex-1 py-2 rounded-[2px] bg-[#161B26] border border-cyan-500/40 text-cyan-300 font-telemetry-mono font-bold text-[11px] hover:bg-[#1E2536] hover:border-cyan-400 transition-colors"
             >
-              {isSubmitting ? "Submitting..." : "Submit check-in"}
+              {isSubmitting ? "RECORDING..." : "COMMIT TELEMETRY LOG"}
             </button>
           </div>
         </form>
